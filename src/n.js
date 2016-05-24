@@ -151,7 +151,7 @@
       set: function(val) {
         this['_'+key] = val;
         if (this.updateDOM) {
-          this.updateDOM(key);
+          this._updateDOM(key);
         }
       },
       get: function() {
@@ -215,22 +215,34 @@
   };
   _NotificationProto.attributeChangedCallback = function(attr, oldVal, newVal) {
     if (!attr.indexOf('n-')/* begins with `n-` */) {
-      attr = attr.slice(2).toLowerCase();
+      attr = attr.slice(2).toLowerCase(); // remove n- and make lowercase.
       if (!['icon', 'title', 'subtitle', 'text', 'actions'].indexOf(attr)){
         this[attr] = newVal;
+        self._updateDOM(attr);
       }
     }
   }
   /**
-   * @function updateDOM
+   * @function reloadActions
    * @description
-   * Called when the DOM needs to be updated (after setting a property).
+   * Reload the action buttons in the user interface.
    * Please call this after modifying `actions`.
-   * @param {string} key The name of the key that was changed.
    * @memberof NotificationBox
    * @instance
    */
-  _NotificationProto.updateDOM = function(key) {
+  _NotificationProto.reloadActions = function() {
+    this._updateDOM('actions')
+  };
+  /**
+   * @function _updateDOM
+   * @description
+   * Called when the DOM needs to be updated (after setting a property).
+   * @param {string} key The name of the key that was changed.
+   * @memberof NotificationBox
+   * @instance
+   * @private
+   */
+  _NotificationProto._updateDOM = function(key) {
     var $this = $(this._shadow);
     if (key) {
       switch (key) {
@@ -337,13 +349,13 @@
       });
     };
     /**
-     * @function njs
+     * @function n
      * @memberof jQuery
      * @description
      * Takes either two arguments: (name, value) to set or one argument: (name) to get, or one argument: ({opts}) to set many.
      * @instance
      */
-    window.jQuery.fn.njs = function(/* name, value or name or {name:value} */) {
+    window.jQuery.fn.n = function(/* name, value or name or {name:value} */) {
       var opts, $boxes = $(this).filter('notification-box');
       if (arguments.count == 2) {
         opts = {};
