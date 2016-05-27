@@ -29,13 +29,6 @@
    *   + Value: the callback for the button.
    */
 
-  /* *
-   * @const _libdoc
-   * @private
-   * @description The `document` object containing the `<template>` tag for the notification.
-   */
-  var _libdoc =  (document._currentScript || document.currentScript).ownerDocument;
-
   /**
    * @namespace _NotificationCenterProto
    * @private
@@ -54,6 +47,7 @@
    *   - `actions`: see {@link Actions}
    *   - `minimal`: If this is truthy, the action buttons will slide over the body on hover, and disappear on mouseout.
    *   - `click`: The action to run on clicking the notification. See the callbacks in `actions`.
+   *   - `template`: the template for the notification.
    *
    * @function addNotification
    * @memberof NotificationCenter
@@ -69,7 +63,8 @@
       text: "",
       actions: this.defaultActions || {"Close": null},
       minimal: this.defaultToMinimal || false,
-      click: this.defaultClickAction || false
+      click: this.defaultClickAction || false,
+      template: this.notificationTemplate || '<div class="height-container"><div class="main"><div class="icon"><img alt=""><div class="msg"><div class="title"></div><div class="subtitle"></div><div class="text"></div></div><div class="actions"></div></div></div>'
     }, opts);
     var notif = document.createElement('notification-box');
     notif.icon = opts.icon;
@@ -79,6 +74,7 @@
     notif.minimal = !!opts.minimal;
     notif.actions = opts.actions;
     notif.clickAction = opts.click;
+    notif._template = template;
     u(this).prepend(notif);
     return notif;
   };
@@ -129,6 +125,14 @@
    * `opts` parameter, this value will be used instead.
    */
   _NotificationCenterProto.defaultClickAction = false;
+
+  /**
+   * @member {string} notificationTemplate
+   * @memberof NotificationCenter
+   * @instance
+   * The template to use inside of each notification box. Change this if you change the class names in the CSS.
+   */
+   _NotificationCenterProto.notificationTemplate = undefined;
 
   /**
    * @constructor NotificationCenter
@@ -205,10 +209,8 @@
     * @private
     */
   _NotificationProto.createdCallback = function() {
-    var tmpl = _libdoc.getElementById('notification');
-    var clone= document.importNode(tmpl.content, true);
-    this._shadow = this.createShadowRoot();
-    this._shadow.appendChild(clone);
+    this.innerHTML = this._template;
+    delete this._template; // temporary.
     u(this).on('click', this._handleActionClick.bind(this));
   };
   _NotificationProto.attributeChangedCallback = function(attr, oldVal, newVal) {
