@@ -9,7 +9,8 @@ To get started, add a `<notification-center>` element to your HTML page:
 Next, include the library (in the `<head>` element):
 
 ```HTML
-<link rel="import" href="/path/to/n.html" charset="utf-8">
+<link rel="stylesheet" href="/path/to/n.css" charset="utf-8">
+<script src="/path/to/n.js" charset="utf-8"></script>
 <!-- If you’re supporting browsers that don’t support
      Shadow DOM (http://caniuse.com/#feat=shadowdom,
      as of 2016, you should be): -->
