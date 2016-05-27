@@ -9,12 +9,12 @@ To get started, add a `<notification-center>` element to your HTML page:
 Next, include the library (in the `<head>` element):
 
 ```HTML
-<link rel="stylesheet" href="/path/to/n.css" charset="utf-8">
-<script src="/path/to/n.js" charset="utf-8"></script>
 <!-- If you’re supporting browsers that don’t support
      Shadow DOM (http://caniuse.com/#feat=shadowdom,
-     as of 2016, you should be): -->
+     as of 2016, you should be), include this polyfill: -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.21/webcomponents.min.js" charset="utf-8"></script>
+<link rel="stylesheet" href="/path/to/n.css" charset="utf-8">
+<script src="/path/to/n.js" charset="utf-8"></script>
 ```
 In case you haven’t seen that first tag before, it’s a HTML import, kind of like a `<script>` tag or a `<link rel="stylesheet">` tag, except it imports HTML and separates it from the rest of your page, so it doesn’t affect you.
 
