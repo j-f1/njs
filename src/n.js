@@ -1,9 +1,8 @@
 /**
- * @file n.js main file
+ * @file n.js
  * @author Jed Fox
  * @copyright Copyright © 2016 Jed Fox
  * @license MIT
- * Thanks to http://youmightnotneedjquery.com for jQuery replacement.
  */
 
 (function() {
