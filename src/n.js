@@ -368,6 +368,7 @@
         try {this.parentNode.removeChild(this); } catch(_) {}
       }.bind(this), 5000 /* animation duration */);
     }
+    event.stopImmediatePropagation();
   };
   /**
    * @constructor NotificationBox
