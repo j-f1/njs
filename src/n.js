@@ -241,7 +241,7 @@
         self._updateDOM(attr);
       }
     }
-  }
+  };
   /**
    * @function reloadActions
    * @description
@@ -251,7 +251,7 @@
    * @instance
    */
   _NotificationProto.reloadActions = function() {
-    this._updateDOM('actions')
+    this._updateDOM('actions');
   };
   /**
    * @function _updateDOM
@@ -299,15 +299,15 @@
     var $actions = this.querySelector('.actions');
     $actions.innerHTML = '';
     if (this.minimal) {
-      $actions.classList.add('minimal')
+      $actions.classList.add('minimal');
     } else {
-      $actions.classList.remove('minimal')
+      $actions.classList.remove('minimal');
     }
     this.actions.forEach(function(name) {
       var $action = document.createElement('div');
       $action.className = 'action';
       $action.textContent = name;
-      $action.addEventListener('click', this._handleActionClick.bind(this))
+      $action.addEventListener('click', this._handleActionClick.bind(this));
       $actions.appendChild($action);
     }.bind(this));
   };
@@ -341,8 +341,8 @@
       var $heightContainer = this.querySelector('.height-container');
       $heightContainer.classList.add('hide');
       setTimeout(function() {
-        this.parentNode.removeChild(this)
-      }.bind(this), 400 /* animation duration */)
+        this.parentNode.removeChild(this);
+      }.bind(this), 400 /* animation duration */);
     }
   };
   /**
