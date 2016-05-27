@@ -76,7 +76,7 @@
    * @return {NotificationBox} The created notification.
    */
   _NotificationCenterProto.addNotification = function(opts) {
-    opts = u.extend({
+    opts = extend({
       icon: this.defaultIcon,
       title: this.defaultTitle || "\xA0",
       subtitle: "",
@@ -168,7 +168,7 @@
    * @lends NotificationBox
    */
   var _NotificationProto = Object.create(HTMLElement.prototype);
-  u.each(['icon', 'title', 'subtitle', 'text', 'minimal', 'actions'], function (_, key) {
+  ['icon', 'title', 'subtitle', 'text', 'minimal', 'actions'].forEach(function(key) {
     Object.defineProperty(_NotificationProto, key, {
       set: function(val) {
         this['_'+key] = val;
