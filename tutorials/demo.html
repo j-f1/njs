@@ -122,7 +122,7 @@
         });
       }, 1000);
     });
-    if (window.WebComponents) {
+    if (window.WebComponents.flags.shadow/* polyfilled */) {
       window.addEventListener('WebComponentsReady', ready);
     } else {
       window.addEventListener('DOMReady', ready);
