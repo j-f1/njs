@@ -10,7 +10,7 @@ Next, include the library (in the `<head>` element):
 
 ```HTML
 <!-- If you’re supporting browsers that don’t support
-     Shadow DOM (http://caniuse.com/#feat=shadowdom,
+     Custom Elements (http://caniuse.com/#feat=shadowdom,
      as of 2016, you should be), include this polyfill: -->
 <script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.7.21/webcomponents.min.js" charset="utf-8"></script>
 <link rel="stylesheet" href="/path/to/n.css" charset="utf-8">
