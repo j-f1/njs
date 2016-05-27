@@ -7,8 +7,6 @@
 
 (function() {
   'use strict';
-  var $ = jQuery.noConflict();
-
   /**
    * @typedef {?(function|boolean)} Action
    * @description
@@ -64,7 +62,7 @@
    * @return {NotificationBox} The created notification.
    */
   _NotificationCenterProto.addNotification = function(opts) {
-    opts = $.extend({
+    opts = u.extend({
       icon: this.defaultIcon,
       title: this.defaultTitle || "\xA0",
       subtitle: "",
@@ -81,7 +79,7 @@
     notif.minimal = !!opts.minimal;
     notif.actions = opts.actions;
     notif.clickAction = opts.click;
-    $(notif).prependTo(this);
+    u(this).prepend(notif);
     return notif;
   };
 
@@ -146,7 +144,7 @@
    * @lends NotificationBox
    */
   var _NotificationProto = Object.create(HTMLElement.prototype);
-  $.each(['icon', 'title', 'subtitle', 'text', 'minimal', 'actions'], function (_, key) {
+  u.each(['icon', 'title', 'subtitle', 'text', 'minimal', 'actions'], function (_, key) {
     Object.defineProperty(_NotificationProto, key, {
       set: function(val) {
         this['_'+key] = val;
@@ -211,7 +209,7 @@
     var clone= document.importNode(tmpl.content, true);
     this._shadow = this.createShadowRoot();
     this._shadow.appendChild(clone);
-    $(this).click(this._handleActionClick.bind(this));
+    u(this).on('click', this._handleActionClick.bind(this));
   };
   _NotificationProto.attributeChangedCallback = function(attr, oldVal, newVal) {
     if (!attr.indexOf('n-')/* begins with `n-` */) {
@@ -243,7 +241,7 @@
    * @private
    */
   _NotificationProto._updateDOM = function(key) {
-    var $this = $(this._shadow);
+    var $this = u(this._shadow);
     if (key) {
       switch (key) {
         case 'icon':
@@ -269,24 +267,24 @@
     this._updateActions();
   };
   _NotificationProto._updateIcon = function() {
-    var $this = $(this._shadow);
+    var $this = u(this._shadow);
     $this.find('.icon').attr('src', this.icon);
   };
   _NotificationProto._updateBody = function() {
-    var $this = $(this._shadow);
-    $.each(['title', 'subtitle', 'text'], function(_, key) {
+    var $this = u(this._shadow);
+    u.each(['title', 'subtitle', 'text'], function(_, key) {
       $this.find('.'+key).text(this[key]);
     }.bind(this));
   };
   _NotificationProto._updateActions = function() {
-    var $this = $(this._shadow);
-    var $actions = $this
+    var $this = u(this._shadow);
+    var $actions = uthis
                     .find('.actions')
                     .empty()
                     .toggleClass('minimal', !!this.minimal);
-    $.each(this.actions, function(name) {
+    u.each(this.actions, function(name) {
       $actions.append(
-        $('<div class="action"></div>')
+        u('<div class="action"></div>')
           .text(name)
           .click(this._handleActionClick.bind(this))
       );
@@ -304,7 +302,7 @@
     if (event.target === this) {
       cb = this.clickAction;
     } else {
-      var key = $(event.target).text();
+      var key = u(event.target).text();
       cb = this.actions[key];
     }
     var result = true;
@@ -319,11 +317,12 @@
       result = cb;
     }
     if (result) {
-      $(this._shadow)
-      .find('.height-container')
-      .animate({opacity: 0.001}, 250)
-      .animate({height: 0}, 250, function () {
-        $(this).remove();
+      var heightContainer = u(this._shadow)
+                              .find('.height-container')
+                              .get(0);
+      Velocity(heightContainer, {opacity: 0.001}, 250)
+      Velocity(heightContainer, {height: 0}, 250, function () {
+        u(this).remove();
       }.bind(this));
     }
   };
@@ -344,7 +343,7 @@
   // jQuery support:
   if (window.jQuery) {
     window.jQuery.fn.addNotification = function(opts) {
-      $(this).filter('notification-center').each(function() {
+      this.filter('notification-center').each(function() {
         this.addNotification(opts);
       });
     };
@@ -356,7 +355,7 @@
      * @instance
      */
     window.jQuery.fn.n = function(/* name, value or name or {name:value} */) {
-      var opts, $boxes = $(this).filter('notification-box');
+      var opts, $boxes = this.filter('notification-box');
       if (arguments.count == 2) {
         opts = {};
         opts[arguments[0]] = arguments[1];
