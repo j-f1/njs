@@ -36,6 +36,7 @@ notification-box .icon {
   width: 32px;
   height: 32px;
   margin-left: 0.6em;
+  background-size: contain;
 }
 
 notification-box .msg {

@@ -41,7 +41,7 @@
       if (!arguments[i]) continue;
 
       for (var key in arguments[i]) {
-        if (arguments[i].hasOwnProperty(key)) {
+        if (arguments[i].hasOwnProperty(key) && arguments[i][key]) {
           defaults[key] = arguments[i][key];
         }
       }
@@ -84,9 +84,24 @@
       actions: this.defaultActions || {"Close": null},
       minimal: this.defaultToMinimal || false,
       click: this.defaultClickAction || false,
-      template: this.notificationTemplate || '<div class="height-container"><div class="main"><div class="icon"><img alt=""><div class="msg"><div class="title"></div><div class="subtitle"></div><div class="text"></div></div><div class="actions"></div></div></div>'
+/* jshint multistr: true */
+      template: this.notificationTemplate || '\
+<div class="height-container">\
+  <div class="main"><div class="icon">\
+    <img alt="">\
+  </div>\
+  <div class="msg">\
+    <div class="title"></div>\
+    <div class="subtitle"></div>\
+    <div class="text"></div>\
+  </div>\
+  <div class="actions"></div>\
+</div>'
+/* jshint multistr: false */
     }, opts);
     var notif = document.createElement('notification-box');
+    notif.innerHTML = opts.template;
+
     notif.icon = opts.icon;
     notif.title = opts.title;
     notif.subtitle = opts.subtitle;
@@ -94,7 +109,7 @@
     notif.minimal = !!opts.minimal;
     notif.actions = opts.actions;
     notif.clickAction = opts.click;
-    notif._template = template;
+
     this.insertBefore(notif, this.firstChild);
     return notif;
   };
@@ -125,7 +140,7 @@
    * If no `actions` key is specified in `addNotification()`’s
    * `opts` parameter, these actions will be used instead.
    */
-  _NotificationCenterProto.defaultActions = {"Close": null};
+  _NotificationCenterProto.defaultActions = undefined;
 
   /**
    * @member {string} defaultToMinimal
@@ -172,9 +187,9 @@
     Object.defineProperty(_NotificationProto, key, {
       set: function(val) {
         this['_'+key] = val;
-        if (this.updateDOM) {
+        try {
           this._updateDOM(key);
-        }
+        } catch (_) {}
       },
       get: function() {
         return this['_'+key];
@@ -223,20 +238,28 @@
     * @description
     * Called when an instance of the `NotificationBox` is created.
     *
-    * Sets up the Shadow DOM and the click action.
+    * Sets up the click action.
     * @memberof NotificationBox
     * @instance
     * @private
     */
   _NotificationProto.createdCallback = function() {
-    this.innerHTML = this._template;
-    delete this._template; // temporary.
     this.addEventListener('click', this._handleActionClick.bind(this));
   };
+  /**
+   * @function attributeChangedCallback
+   * @description
+   * Called when one of the `<notification-box>` element’s attributes is changed.
+   *
+   * Changes the correspondng attribute.
+   * @memberof NotificationBox
+   * @instance
+   * @private
+   */
   _NotificationProto.attributeChangedCallback = function(attr, oldVal, newVal) {
     if (!attr.indexOf('n-')/* begins with `n-` */) {
       attr = attr.slice(2).toLowerCase(); // remove n- and make lowercase.
-      if (!['icon', 'title', 'subtitle', 'text', 'actions'].indexOf(attr)){
+      if (!['icon', 'title', 'subtitle', 'text'].indexOf(attr)){
         this[attr] = newVal;
         self._updateDOM(attr);
       }
@@ -282,13 +305,14 @@
           break;
       }
       return;
+    } else {
+      this._updateIcon();
+      this._updateBody();
+      this._updateActions();
     }
-    this._updateIcon();
-    this._updateBody();
-    this._updateActions();
   };
   _NotificationProto._updateIcon = function() {
-    this.querySelector('.icon').setAttribute('src', this.icon);
+    this.querySelector('.icon').style.backgroundImage = 'url("' + this.icon.replace('"', '\\"') + '")';
   };
   _NotificationProto._updateBody = function() {
     ['title', 'subtitle', 'text'].forEach(function(key) {
@@ -303,13 +327,15 @@
     } else {
       $actions.classList.remove('minimal');
     }
-    this.actions.forEach(function(name) {
-      var $action = document.createElement('div');
-      $action.className = 'action';
-      $action.textContent = name;
-      $action.addEventListener('click', this._handleActionClick.bind(this));
-      $actions.appendChild($action);
-    }.bind(this));
+    for (var key in this.actions) {
+      if (this.actions.hasOwnProperty(key)) {
+        var $action = document.createElement('div');
+        $action.className = 'action';
+        $action.textContent = key;
+        $action.addEventListener('click', this._handleActionClick.bind(this));
+        $actions.appendChild($action);
+      }
+    }
   };
   /**
    * Called when the the notification (or one of its actions) is clicked.
