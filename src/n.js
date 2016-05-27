@@ -355,9 +355,7 @@
     var result = true;
     if (typeof cb == "function") {
       result = cb.apply(event.target, arguments);
-      /* jshint -W041 */
-      if (result == undefined) {
-        /* jshint +W041 */
+      if (result === undefined || result === null) {
         result = true;
       }
     } else if (typeof cb == "boolean") {
