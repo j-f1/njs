@@ -20,7 +20,6 @@
     "destination": "doc/",
     "recurse": true,
     "tutorials": "tutorials/",
-    "readme": "README.md",
-    "private": true
+    "readme": "README.md"
   }
 }

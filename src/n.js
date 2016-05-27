@@ -34,7 +34,7 @@
    * @function extend
    * @private
    * @description like `$.extend`: `extend(defaults, opts1, ...)`
-   * @author http://youmightnotneedjquery.com/#extend
+   * @author {@link http://youmightnotneedjquery.com/#extend} (but improved)
    */
   var extend = function(defaults) {
     for (var i = 1; i < arguments.length; i++) {
