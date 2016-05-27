@@ -366,9 +366,9 @@
     if (result) {
       var $heightContainer = this.querySelector('.height-container');
       $heightContainer.classList.add('hide');
-      setTimeout(function() {
-        this.parentNode.removeChild(this);
-      }.bind(this), 400 /* animation duration */);
+      $heightContainer.addEventListener('animationend', function() {
+        try {this.parentNode.removeChild(this); } catch(_) {}
+      }.bind(this), 5000 /* animation duration */);
     }
   };
   /**

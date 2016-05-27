@@ -147,18 +147,30 @@ notification-box .height-container {
 }
 
 @-webkit-keyframes njs-height-container-hide {
+  0% {
+    height: 4.5625em;
+    opacity: 1;
+  }
   50% {
+    height: 4.5625em;
     opacity: 0;
   }
   100% {
+    opacity: 0;
     height: 0;
   }
 }
 @keyframes njs-height-container-hide {
+  0% {
+    height: 4.5625em;
+    opacity: 1;
+  }
   50% {
+    height: 4.5625em;
     opacity: 0;
   }
   100% {
+    opacity: 0;
     height: 0;
   }
 }
