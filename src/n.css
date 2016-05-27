@@ -27,7 +27,11 @@ notification-box .main {
   user-select: none;
 
   position: relative;
+
+  -webkit-animation: njs-show-notification 1s;
+          animation: njs-show-notification 1s;
 }
+
 notification-box .icon {
   width: 32px;
   height: 32px;
@@ -115,7 +119,7 @@ notification-box .actions .action:not(:last-child) {
   border-bottom-width: 1px;
 }
 
-@-webkit-keyframes njs-height-container {
+@-webkit-keyframes njs-height-container-show {
   0% {
     height: 0;
     opacity: 0;
@@ -125,7 +129,7 @@ notification-box .actions .action:not(:last-child) {
     opacity: 1;
   }
 }
-@keyframes njs-height-container {
+@keyframes njs-height-container-show {
   0% {
     height: 0;
     opacity: 0;
@@ -135,6 +139,33 @@ notification-box .actions .action:not(:last-child) {
     opacity: 1;
   }
 }
+
+notification-box .height-container {
+  -webkit-animation: njs-height-container-show 1s;
+          animation: njs-height-container-show 1s;
+}
+
+@-webkit-keyframes njs-height-container-hide {
+  50% {
+    opacity: 0;
+  }
+  100% {
+    height: 0;
+  }
+}
+@keyframes njs-height-container-hide {
+  50% {
+    opacity: 0;
+  }
+  100% {
+    height: 0;
+  }
+}
+notification-box .height-container.hide {
+  -webkit-animation: njs-height-container-hide 400ms;
+          animation: njs-height-container-hide 400ms;
+}
+
 
 @-webkit-keyframes njs-show-notification {
   0% {
@@ -156,12 +187,4 @@ notification-box .actions .action:not(:last-child) {
     -webkit-transform: none;
     transform: none;
   }
-}
-notification-box .main {
-  -webkit-animation: show-notification 1s;
-  animation: show-notification 1s;
-}
-notification-box .height-container {
-  -webkit-animation: height-container 1s;
-  animation: height-container 1s;
 }

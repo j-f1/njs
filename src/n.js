@@ -3,6 +3,7 @@
  * @author Jed Fox
  * @copyright Copyright © 2016 Jed Fox
  * @license MIT
+ * Thanks to http://youmightnotneedjquery.com for jQuery replacement.
  */
 
 (function() {
@@ -28,6 +29,25 @@
    *   + Key: the text of the button
    *   + Value: the callback for the button.
    */
+
+  /**
+   * @function extend
+   * @private
+   * @description like `$.extend`: `extend(defaults, opts1, ...)`
+   * @author http://youmightnotneedjquery.com/#extend
+   */
+  var extend = function(defaults) {
+    for (var i = 1; i < arguments.length; i++) {
+      if (!arguments[i]) continue;
+
+      for (var key in arguments[i]) {
+        if (arguments[i].hasOwnProperty(key)) {
+          defaults[key] = arguments[i][key];
+        }
+      }
+    }
+    return defaults;
+  };
 
   /**
    * @namespace _NotificationCenterProto
@@ -75,7 +95,7 @@
     notif.actions = opts.actions;
     notif.clickAction = opts.click;
     notif._template = template;
-    u(this).prepend(notif);
+    this.insertBefore(notif, this.firstChild);
     return notif;
   };
 
@@ -211,7 +231,7 @@
   _NotificationProto.createdCallback = function() {
     this.innerHTML = this._template;
     delete this._template; // temporary.
-    u(this).on('click', this._handleActionClick.bind(this));
+    this.addEventListener('click', this._handleActionClick.bind(this));
   };
   _NotificationProto.attributeChangedCallback = function(attr, oldVal, newVal) {
     if (!attr.indexOf('n-')/* begins with `n-` */) {
@@ -243,7 +263,6 @@
    * @private
    */
   _NotificationProto._updateDOM = function(key) {
-    var $this = u(this._shadow);
     if (key) {
       switch (key) {
         case 'icon':
@@ -269,27 +288,27 @@
     this._updateActions();
   };
   _NotificationProto._updateIcon = function() {
-    var $this = u(this._shadow);
-    $this.find('.icon').attr('src', this.icon);
+    this.querySelector('.icon').setAttribute('src', this.icon);
   };
   _NotificationProto._updateBody = function() {
-    var $this = u(this._shadow);
-    u.each(['title', 'subtitle', 'text'], function(_, key) {
-      $this.find('.'+key).text(this[key]);
+    ['title', 'subtitle', 'text'].forEach(function(key) {
+      this.querySelector('.'+key).textContent = this[key];
     }.bind(this));
   };
   _NotificationProto._updateActions = function() {
-    var $this = u(this._shadow);
-    var $actions = uthis
-                    .find('.actions')
-                    .empty()
-                    .toggleClass('minimal', !!this.minimal);
-    u.each(this.actions, function(name) {
-      $actions.append(
-        u('<div class="action"></div>')
-          .text(name)
-          .click(this._handleActionClick.bind(this))
-      );
+    var $actions = this.querySelector('.actions');
+    $actions.innerHTML = '';
+    if (this.minimal) {
+      $actions.classList.add('minimal')
+    } else {
+      $actions.classList.remove('minimal')
+    }
+    this.actions.forEach(function(name) {
+      var $action = document.createElement('div');
+      $action.className = 'action';
+      $action.textContent = name;
+      $action.addEventListener('click', this._handleActionClick.bind(this))
+      $actions.appendChild($action);
     }.bind(this));
   };
   /**
@@ -304,7 +323,7 @@
     if (event.target === this) {
       cb = this.clickAction;
     } else {
-      var key = u(event.target).text();
+      var key = event.target.textContent;
       cb = this.actions[key];
     }
     var result = true;
@@ -319,13 +338,11 @@
       result = cb;
     }
     if (result) {
-      var heightContainer = u(this._shadow)
-                              .find('.height-container')
-                              .get(0);
-      Velocity(heightContainer, {opacity: 0.001}, 250)
-      Velocity(heightContainer, {height: 0}, 250, function () {
-        u(this).remove();
-      }.bind(this));
+      var $heightContainer = this.querySelector('.height-container');
+      $heightContainer.classList.add('hide');
+      setTimeout(function() {
+        this.parentNode.removeChild(this)
+      }.bind(this), 400 /* animation duration */)
     }
   };
   /**
