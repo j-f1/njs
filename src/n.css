@@ -1,4 +1,7 @@
-notification-box .height-container .main {
+notification-box .height-container {
+  pointer-events: none;
+}
+notification-box .main {
   margin-bottom: 0.625em;
   width: 20.25em;
   height: 3.9375em;
@@ -30,12 +33,6 @@ notification-box .height-container .main {
 
   -webkit-animation: njs-show-notification 1s;
           animation: njs-show-notification 1s;
-}
-
-notification-box .height-container .main :not(.icon),
-notification-box .height-container .main .msg [class]:not(.icon) {
-  font-family: 'Helvetica Neue', Helvetica, 'Lucida Grande',sans-serif;
-  font-family: -apple-system, 'Helvetica Neue', Helvetica, 'Lucida Grande',sans-serif;
 }
 
 notification-box .main .icon {
@@ -78,6 +75,7 @@ notification-box .actions {
   width: 4.45em;
   min-width: 4.45em;
   overflow: hidden;
+  pointer-events: auto;
 }
 notification-box .minimal.actions {
   transform: translateX(100%);
