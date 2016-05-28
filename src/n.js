@@ -41,7 +41,7 @@
 
       for (var key in arguments[i]) {
         if (arguments[i].hasOwnProperty(key) && (typeof arguments[i][key] === "string" ?
-                                                  arguments[i][key].replace(/\s/, '').length :
+                                                  arguments[i][key].replace(/\s/g, '').length :
                                                   arguments[i][key])) {
           defaults[key] = arguments[i][key];
         }
@@ -291,7 +291,7 @@
     this.addEventListener('click', this._handleActionClick.bind(this));
   };
   _NotificationProto.attachedCallback = function() {
-    if (!this.innerHTML.replace(/\s/, '').length) {
+    if (!this.innerHTML.replace(/\s/g, '').length) {
       console.error('The notification object %o was included in the page’s source. This is not currently supported. Please use addNotification().', this);
     }
   };
@@ -362,7 +362,7 @@
   };
   _NotificationProto._updateIcon = function() {
     var iconHolder = this.querySelector('.icon');
-    if (this.iconHTML.replace(/\s/, '').length) {
+    if (this.iconHTML.replace(/\s/g, '').length) {
       iconHolder.style.backgroundImage = '';
       iconHolder.innerHTML = toString(this.iconHTML);
     } else {
