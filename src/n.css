@@ -33,7 +33,7 @@ notification-box .height-container .main {
 }
 
 notification-box .height-container .main>:not(.icon)
-notification-box .height-container .main>.msg :not(.icon) {
+notification-box .height-container .main>.msg [class]:not(.icon) {
   font-family: 'Helvetica Neue', Helvetica, 'Lucida Grande',sans-serif;
   font-family: -apple-system, 'Helvetica Neue', Helvetica, 'Lucida Grande',sans-serif;
 }
