@@ -316,7 +316,7 @@
    * @private
    */
   _NotificationProto._updateDOM = function(key) {
-    if (key.replace(/\s/, '').length) {
+    if (key) {
       switch (key) {
         case 'icon':
           this._updateIcon();
