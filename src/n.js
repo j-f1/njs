@@ -49,6 +49,25 @@
     }
     return defaults;
   };
+  var toString = function(x) {
+    switch (typeof x) {
+      case "undefined":
+        return "";
+      case "number":
+      /* falls through */
+      case "boolean":
+        return ""+x;
+      case "string":
+        return x;
+      case "object":
+      /* fall through */
+      case "array":
+        if (x === null) {return "";}
+        return JSON.stringify(x);
+      default:
+        return x.toString();
+    }
+  };
 
   /**
    * @namespace _NotificationCenterProto
@@ -345,14 +364,14 @@
     var iconHolder = this.querySelector('.icon');
     if (this.iconHTML.replace(/\s/, '').length) {
       iconHolder.style.backgroundImage = '';
-      iconHolder.innerHTML = this.iconHTML;
+      iconHolder.innerHTML = toString(this.iconHTML);
     } else {
-      iconHolder.style.backgroundImage = 'url("' + this.icon.replace('"', '\\"') + '")';
+      iconHolder.style.backgroundImage = 'url("' + toString(this.icon).replace('"', '\\"') + '")';
     }
   };
   _NotificationProto._updateBody = function() {
     ['title', 'subtitle', 'text'].forEach(function(key) {
-      this.querySelector('.'+key).textContent = this[key];
+      this.querySelector('.'+key).textContent = toString(this[key]);
     }.bind(this));
   };
   _NotificationProto._updateActions = function() {
@@ -367,7 +386,7 @@
       if (this.actions.hasOwnProperty(key)) {
         var $action = document.createElement('div');
         $action.className = 'action';
-        $action.textContent = key;
+        $action.textContent = toString(key);
         $action.addEventListener('click', this._handleActionClick.bind(this));
         $actions.appendChild($action);
       }
