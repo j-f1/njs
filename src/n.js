@@ -338,6 +338,7 @@
     if (key) {
       switch (key) {
         case 'icon':
+        case 'iconHTML':
           this._updateIcon();
           break;
         case 'title':
