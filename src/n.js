@@ -98,6 +98,7 @@
   /* jshint multistr: false */
       },{
       icon: this.defaultIcon,
+      iconHTML: this.defaultIconHTML,
       title: this.defaultTitle,
       subtitle: "",
       text: "",
@@ -110,6 +111,7 @@
     notif.innerHTML = opts.template;
 
     notif.icon = opts.icon;
+    notif.iconHTML = opts.iconHTML;
     notif.title = opts.title;
     notif.subtitle = opts.subtitle;
     notif.text = (opts.text || opts.subtitle) ? opts.text : "\xA0";
@@ -138,6 +140,15 @@
    * If no `icon` key is specified in `addNotification()`’s `opts` parameter, this icon will be used instead.
    */
   _NotificationCenterProto.defaultIcon = "";
+
+  /**
+   * @member {string} defaultIconHTML
+   * @memberof NotificationCenter
+   * @instance
+   * The default icon HTML for a notification.
+   * If no `iconHTML` key is specified in `addNotification()`’s `opts` parameter, this icon HTML will be used instead.
+   */
+  _NotificationCenterProto.defaultIconHTML = "";
 
   /**
    * @member {Actions} defaultActions

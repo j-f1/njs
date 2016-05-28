@@ -1,4 +1,4 @@
-notification-box .main {
+notification-box .height-container .main {
   margin-bottom: 0.625em;
   width: 20.25em;
   height: 3.9375em;
@@ -32,28 +32,33 @@ notification-box .main {
           animation: njs-show-notification 1s;
 }
 
-notification-box .icon {
+notification-box .height-container .main * {
+  font-family: 'Helvetica Neue', Helvetica, 'Lucida Grande',sans-serif;
+  font-family: -apple-system, 'Helvetica Neue', Helvetica, 'Lucida Grande',sans-serif;
+}
+
+notification-box .main .icon {
   width: 32px;
   height: 32px;
   margin-left: 0.6em;
   background-size: contain;
 }
 
-notification-box .msg {
+notification-box .main .msg {
   margin-left: 0.6em;
 }
-notification-box .msg :not(:last-child) {
+notification-box .main .msg :not(:last-child) {
   margin-bottom: 0.25em;
 }
-notification-box .title {
+notification-box .main .title {
   font-size: 0.775em;
   font-weight: bold;
   line-height: 1.1em;
 }
-notification-box .subtitle {
+notification-box .main .subtitle {
   font-size: 0.7em;
 }
-notification-box .text {
+notification-box .main .text {
   font-size: 0.7em;
 }
 
