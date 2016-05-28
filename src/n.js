@@ -245,6 +245,11 @@
   _NotificationProto.createdCallback = function() {
     this.addEventListener('click', this._handleActionClick.bind(this));
   };
+  _NotificationProto.attachedCallback = function() {
+    if (!this.innerHTML) {
+      console.error('The notification object %o was included in the page’s source. This is not currently supported. Please use addNotification().', this);
+    }
+  };
   /**
    * @function attributeChangedCallback
    * @description
