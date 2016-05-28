@@ -40,7 +40,9 @@
       if (!arguments[i]) continue;
 
       for (var key in arguments[i]) {
-        if (arguments[i].hasOwnProperty(key) && arguments[i][key]) {
+        if (arguments[i].hasOwnProperty(key) && (typeof arguments[i][key] === "string" ?
+                                                  arguments[i][key].replace(/\s/, '').length :
+                                                  arguments[i][key])) {
           defaults[key] = arguments[i][key];
         }
       }
@@ -76,27 +78,33 @@
    */
   _NotificationCenterProto.addNotification = function(opts) {
     opts = extend({
+        title: "\xA0",
+        actions: {"Close": null},
+        minimal: false,
+        click: false,
+        /* jshint multistr: true */
+        template: '\
+          <div class="height-container">\
+            <div class="main"><div class="icon">\
+              <img alt="">\
+            </div>\
+            <div class="msg">\
+              <div class="title"></div>\
+              <div class="subtitle"></div>\
+              <div class="text"></div>\
+            </div>\
+            <div class="actions"></div>\
+          </div>'
+  /* jshint multistr: false */
+      },{
       icon: this.defaultIcon,
-      title: this.defaultTitle || "\xA0",
+      title: this.defaultTitle,
       subtitle: "",
       text: "",
-      actions: this.defaultActions || {"Close": null},
-      minimal: this.defaultToMinimal || false,
-      click: this.defaultClickAction || false,
-/* jshint multistr: true */
-      template: this.notificationTemplate || '\
-<div class="height-container">\
-  <div class="main"><div class="icon">\
-    <img alt="">\
-  </div>\
-  <div class="msg">\
-    <div class="title"></div>\
-    <div class="subtitle"></div>\
-    <div class="text"></div>\
-  </div>\
-  <div class="actions"></div>\
-</div>'
-/* jshint multistr: false */
+      actions: this.defaultActions,
+      minimal: this.defaultToMinimal,
+      click: this.defaultClickAction,
+      template: this.notificationTemplate
     }, opts);
     var notif = document.createElement('notification-box');
     notif.innerHTML = opts.template;
@@ -182,7 +190,7 @@
    * @lends NotificationBox
    */
   var _NotificationProto = Object.create(HTMLElement.prototype);
-  ['icon', 'title', 'subtitle', 'text', 'minimal', 'actions'].forEach(function(key) {
+  ['icon', 'iconHTML', 'title', 'subtitle', 'text', 'minimal', 'actions'].forEach(function(key) {
     Object.defineProperty(_NotificationProto, key, {
       set: function(val) {
         this['_'+key] = val;
@@ -201,6 +209,13 @@
    * @instance
    */
    _NotificationProto.icon = "";
+   /**
+    * @member {string} iconHTML - the raw HTML to display as the icon shown in the notification.
+    * @description This takes precedence over `icon`.
+    * @memberof NotificationBox
+    * @instance
+    */
+    _NotificationProto.iconHTML = "";
    /**
     * @member {string} title - the title of the notification
     * @memberof NotificationBox
@@ -246,7 +261,7 @@
     this.addEventListener('click', this._handleActionClick.bind(this));
   };
   _NotificationProto.attachedCallback = function() {
-    if (!this.innerHTML) {
+    if (!this.innerHTML.replace(/\s/, '').length) {
       console.error('The notification object %o was included in the page’s source. This is not currently supported. Please use addNotification().', this);
     }
   };
@@ -290,7 +305,7 @@
    * @private
    */
   _NotificationProto._updateDOM = function(key) {
-    if (key) {
+    if (key.replace(/\s/, '').length) {
       switch (key) {
         case 'icon':
           this._updateIcon();
@@ -316,7 +331,13 @@
     }
   };
   _NotificationProto._updateIcon = function() {
-    this.querySelector('.icon').style.backgroundImage = 'url("' + this.icon.replace('"', '\\"') + '")';
+    var iconHolder = this.querySelector('.icon');
+    if (this.iconHTML.replace(/\s/, '').length) {
+      iconHolder.style.backgroundImage = '';
+      iconHolder.innerHTML = this.iconHTML;
+    } else {
+      iconHolder.style.backgroundImage = 'url("' + this.icon.replace('"', '\\"') + '")';
+    }
   };
   _NotificationProto._updateBody = function() {
     ['title', 'subtitle', 'text'].forEach(function(key) {
