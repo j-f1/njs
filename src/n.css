@@ -54,6 +54,7 @@ notification-box .main .title {
   line-height: 1.1em;
 }
 notification-box .main .subtitle {
+  font-weight: bold;
   font-size: 0.7em;
 }
 notification-box .main .text {
