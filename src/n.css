@@ -44,6 +44,7 @@ notification-box .main .icon {
 
 notification-box .main .msg {
   margin-left: 0.6em;
+  max-width: 200px;
 }
 notification-box .main .msg :not(:last-child) {
   margin-bottom: 0.25em;
