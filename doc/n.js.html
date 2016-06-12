@@ -68,12 +68,33 @@
       if (!arguments[i]) continue;
 
       for (var key in arguments[i]) {
-        if (arguments[i].hasOwnProperty(key) &amp;&amp; arguments[i][key]) {
+        if (arguments[i].hasOwnProperty(key) &amp;&amp; (typeof arguments[i][key] === "string" ?
+                                                  arguments[i][key].replace(/\s/g, '').length :
+                                                  arguments[i][key])) {
           defaults[key] = arguments[i][key];
         }
       }
     }
     return defaults;
+  };
+  var toString = function(x) {
+    switch (typeof x) {
+      case "undefined":
+        return "";
+      case "number":
+      /* falls through */
+      case "boolean":
+        return ""+x;
+      case "string":
+        return x;
+      case "object":
+      /* fall through */
+      case "array":
+        if (x === null) {return "";}
+        return JSON.stringify(x);
+      default:
+        return x.toString();
+    }
   };
 
   /**
@@ -104,32 +125,40 @@
    */
   _NotificationCenterProto.addNotification = function(opts) {
     opts = extend({
+        title: "\xA0",
+        actions: {"Close": null},
+        minimal: false,
+        click: false,
+        /* jshint multistr: true */
+        template: '\
+          &lt;div class="height-container">\
+            &lt;div class="main">&lt;div class="icon">\
+              &lt;img alt="">\
+            &lt;/div>\
+            &lt;div class="msg">\
+              &lt;div class="title">&lt;/div>\
+              &lt;div class="subtitle">&lt;/div>\
+              &lt;div class="text">&lt;/div>\
+            &lt;/div>\
+            &lt;div class="actions">&lt;/div>\
+          &lt;/div>'
+  /* jshint multistr: false */
+      },{
       icon: this.defaultIcon,
-      title: this.defaultTitle || "\xA0",
+      iconHTML: this.defaultIconHTML,
+      title: this.defaultTitle,
       subtitle: "",
       text: "",
-      actions: this.defaultActions || {"Close": null},
-      minimal: this.defaultToMinimal || false,
-      click: this.defaultClickAction || false,
-/* jshint multistr: true */
-      template: this.notificationTemplate || '\
-&lt;div class="height-container">\
-  &lt;div class="main">&lt;div class="icon">\
-    &lt;img alt="">\
-  &lt;/div>\
-  &lt;div class="msg">\
-    &lt;div class="title">&lt;/div>\
-    &lt;div class="subtitle">&lt;/div>\
-    &lt;div class="text">&lt;/div>\
-  &lt;/div>\
-  &lt;div class="actions">&lt;/div>\
-&lt;/div>'
-/* jshint multistr: false */
+      actions: this.defaultActions,
+      minimal: this.defaultToMinimal,
+      click: this.defaultClickAction,
+      template: this.notificationTemplate
     }, opts);
     var notif = document.createElement('notification-box');
     notif.innerHTML = opts.template;
 
     notif.icon = opts.icon;
+    notif.iconHTML = opts.iconHTML;
     notif.title = opts.title;
     notif.subtitle = opts.subtitle;
     notif.text = (opts.text || opts.subtitle) ? opts.text : "\xA0";
@@ -158,6 +187,15 @@
    * If no `icon` key is specified in `addNotification()`’s `opts` parameter, this icon will be used instead.
    */
   _NotificationCenterProto.defaultIcon = "";
+
+  /**
+   * @member {string} defaultIconHTML
+   * @memberof NotificationCenter
+   * @instance
+   * The default icon HTML for a notification.
+   * If no `iconHTML` key is specified in `addNotification()`’s `opts` parameter, this icon HTML will be used instead.
+   */
+  _NotificationCenterProto.defaultIconHTML = "";
 
   /**
    * @member {Actions} defaultActions
@@ -210,7 +248,7 @@
    * @lends NotificationBox
    */
   var _NotificationProto = Object.create(HTMLElement.prototype);
-  ['icon', 'title', 'subtitle', 'text', 'minimal', 'actions'].forEach(function(key) {
+  ['icon', 'iconHTML', 'title', 'subtitle', 'text', 'minimal', 'actions'].forEach(function(key) {
     Object.defineProperty(_NotificationProto, key, {
       set: function(val) {
         this['_'+key] = val;
@@ -229,6 +267,13 @@
    * @instance
    */
    _NotificationProto.icon = "";
+   /**
+    * @member {string} iconHTML - the raw HTML to display as the icon shown in the notification.
+    * @description This takes precedence over `icon`.
+    * @memberof NotificationBox
+    * @instance
+    */
+    _NotificationProto.iconHTML = "";
    /**
     * @member {string} title - the title of the notification
     * @memberof NotificationBox
@@ -273,6 +318,11 @@
   _NotificationProto.createdCallback = function() {
     this.addEventListener('click', this._handleActionClick.bind(this));
   };
+  _NotificationProto.attachedCallback = function() {
+    if (!this.innerHTML.replace(/\s/g, '').length) {
+      console.error('The notification object %o was included in the page’s source. This is not currently supported. Please use addNotification().', this);
+    }
+  };
   /**
    * @function attributeChangedCallback
    * @description
@@ -316,6 +366,7 @@
     if (key) {
       switch (key) {
         case 'icon':
+        case 'iconHTML':
           this._updateIcon();
           break;
         case 'title':
@@ -339,11 +390,17 @@
     }
   };
   _NotificationProto._updateIcon = function() {
-    this.querySelector('.icon').style.backgroundImage = 'url("' + this.icon.replace('"', '\\"') + '")';
+    var iconHolder = this.querySelector('.icon');
+    if (this.iconHTML.replace(/\s/g, '').length) {
+      iconHolder.style.backgroundImage = '';
+      iconHolder.innerHTML = toString(this.iconHTML);
+    } else {
+      iconHolder.style.backgroundImage = 'url("' + toString(this.icon).replace('"', '\\"') + '")';
+    }
   };
   _NotificationProto._updateBody = function() {
     ['title', 'subtitle', 'text'].forEach(function(key) {
-      this.querySelector('.'+key).textContent = this[key];
+      this.querySelector('.'+key).textContent = toString(this[key]);
     }.bind(this));
   };
   _NotificationProto._updateActions = function() {
@@ -358,7 +415,7 @@
       if (this.actions.hasOwnProperty(key)) {
         var $action = document.createElement('div');
         $action.className = 'action';
-        $action.textContent = key;
+        $action.textContent = toString(key);
         $action.addEventListener('click', this._handleActionClick.bind(this));
         $actions.appendChild($action);
       }
@@ -463,7 +520,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri May 27 2016 17:23:49 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun Jun 12 2016 07:35:57 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>
