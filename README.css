@@ -1,0 +1,10 @@
+small:before {
+  content: "[";
+}
+small:after {
+  content: "]";
+}
+small:before, h1 small:after {
+  font-size: 50%;
+}
+
