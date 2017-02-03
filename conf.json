@@ -17,7 +17,7 @@
     }
   },
   "opts": {
-    "destination": "doc/",
+    "destination": "docs/",
     "recurse": true,
     "tutorials": "tutorials/",
     "readme": "README.md"
