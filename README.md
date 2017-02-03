@@ -6,4 +6,3 @@ See [Getting Started](tutorial-getting-started.html)
 to get set up.
 
 Thanks to [You Might Not Need jQuery](http://youmightnotneedjquery.com) for information on how to use modern web browser features instead of relying on jQuery.
-<link href="./README.css" />
