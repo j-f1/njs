@@ -1,4 +1,7 @@
 # n<small>.js</small>
+
+![PRs Accepted](https://img.shields.io/badge/PRs-accepted-brightgreen.svg) ![Maintaners Wanted](https://img.shields.io/badge/maintainers-wanted-lightgray.svg)
+
 n.js is a library for creating notifications that
 look **exactly** like the OS X notification popups.
 See the [Demo](tutorial-demo.html) for an example.
